@@ -66,7 +66,7 @@ public class SelectBookPresent implements ISelectBookPresent {
                         if (cates != null) {
                             mCurrentCatesBea.addAll(cates);
                                 for (ISelectBookCallback iSelectBookCallback : mCallbackList) {
-                                    iSelectBookCallback.getBookList(cates,0);
+                                    iSelectBookCallback.getBookList(cates);
                                 }
                         }
                     } catch (Exception e) {

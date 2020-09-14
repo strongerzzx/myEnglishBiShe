@@ -8,4 +8,14 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+
+    <!--bottomNav选中的时候-->
+    <style name="bottom_nav__select">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <!--bottmNav未选-->
+    <style name="bottom_nav_no_select">
+        <item name="android:textSize">14sp</item>
+    </style>
 </resources>

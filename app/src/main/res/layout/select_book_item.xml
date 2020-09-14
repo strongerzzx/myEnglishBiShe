@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/shape_select_book">
+    android:background="@drawable/selector_select_book"
+    android:clickable="true">
 
     <ImageView
         android:id="@+id/select_iv"
@@ -27,7 +28,7 @@
         android:textStyle="bold"
         android:layout_toRightOf="@id/select_iv"
         android:layout_marginLeft="18dp"
-        android:layout_marginTop="13dp"/>
+        android:layout_marginTop="8dp"/>
     <TextView
         android:id="@+id/select_tv_src"
         android:layout_width="wrap_content"
@@ -37,7 +38,7 @@
         android:textColor="#AAAEB4"
         android:layout_toRightOf="@id/select_iv"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="60dp"/>
+        android:layout_marginTop="40dp"/>
     <TextView
         android:id="@+id/select_tv_src_name"
         android:layout_width="wrap_content"
@@ -46,7 +47,7 @@
         android:textSize="10sp"
         android:textColor="#AAAEB4"
         android:layout_toRightOf="@id/select_tv_src"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="40dp"
         android:layout_marginLeft="5dp"/>
 
     <TextView

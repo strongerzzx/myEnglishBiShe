@@ -7,7 +7,7 @@ import beans.SelectBookBeans;
 public interface ISelectBookCallback {
 
     //获取书籍的数据
-    void getBookList(List<SelectBookBeans.CatesBean> CatesBeanList,int random);
+    void getBookList(List<SelectBookBeans.CatesBean> CatesBeanList);
 
 
     //加载中

@@ -5,12 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 
@@ -74,6 +76,14 @@ public class SelectBookActivity extends AppCompatActivity implements ISelectBook
     private void initEvent() {
         //获取数据
         mSelectBookPresent.getBook();
+
+        mAdapter.setOnItemClickListener(new SelectAdapter.onItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                Intent intent=new Intent(SelectBookActivity.this,HomeActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void initView() { ;
@@ -96,12 +106,11 @@ public class SelectBookActivity extends AppCompatActivity implements ISelectBook
     }
 
     @Override
-    public void getBookList(List<SelectBookBeans.CatesBean> catesBeans,int random) {
+    public void getBookList(List<SelectBookBeans.CatesBean> catesBeans) {
 
         for (SelectBookBeans.CatesBean catesBean : catesBeans) {
+            //TODO:根据P层的Cats里来随机获取 --> 刷新
             List<SelectBookBeans.CatesBean.BookListBean> bookList = catesBean.getBookList();
-
-            SelectBookBeans.CatesBean catesBean1 = catesBeans.get(0);
 
             LogUtil.d(TAG,bookList.get(0).getSize()+"");
                 //空数据的情况

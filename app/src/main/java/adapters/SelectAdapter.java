@@ -25,6 +25,7 @@ public class SelectAdapter extends RecyclerView.Adapter<SelectAdapter.InnerViewH
     private static final String TAG = "SelectAdapter";
    // List<SelectBookBeans.CatesBean.BookListBean> mBeanList=new ArrayList<>();
    List<SelectBookBeans.CatesBean.BookListBean> mBeanList=new ArrayList<>();
+   private onItemClickListener mOnItemClickListener;
     @NonNull
     @Override
     public InnerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -47,6 +48,14 @@ public class SelectAdapter extends RecyclerView.Adapter<SelectAdapter.InnerViewH
         RequestOptions options=new RequestOptions().skipMemoryCache(false).diskCacheStrategy(DiskCacheStrategy.RESOURCE);
         Glide.with(MyApplication.getContext()).load(cover).apply(options).into(holder.ivTitle);
 
+        if (mOnItemClickListener!=null){
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mOnItemClickListener.onItemClick(position);
+                }
+            });
+        }
     }
 
     @Override
@@ -74,5 +83,13 @@ public class SelectAdapter extends RecyclerView.Adapter<SelectAdapter.InnerViewH
             tvSrcName=itemView.findViewById(R.id.select_tv_src_name);
             tvWordSum=itemView.findViewById(R.id.select_tv_word_count);
         }
+    }
+
+    public void setOnItemClickListener(onItemClickListener onItemClickListener) {
+        mOnItemClickListener = onItemClickListener;
+    }
+
+    public interface onItemClickListener{
+        void onItemClick(int position);
     }
 }
