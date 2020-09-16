@@ -18,6 +18,7 @@ import java.util.List;
 
 import bases.MyApplication;
 import beans.SelectBookBeans;
+import presenters.HomePresent;
 import utils.LogUtil;
 
 public class SelectAdapter extends RecyclerView.Adapter<SelectAdapter.InnerViewHolder> {
@@ -37,9 +38,10 @@ public class SelectAdapter extends RecyclerView.Adapter<SelectAdapter.InnerViewH
     public void onBindViewHolder(@NonNull InnerViewHolder holder, int position) {
         SelectBookBeans.CatesBean.BookListBean bookListBean = mBeanList.get(position);
         String originName = bookListBean.getBookOrigin().getOriginName();//来源
+
         String title = bookListBean.getTitle();//书名
         String cover = bookListBean.getCover();//图片
-        int size = bookListBean.getSize();//词量
+        int size = bookListBean.getWordNum();//词量
 
         holder.tvWordSum.setText(String.valueOf(size));
         holder.tvSrcName.setText(originName);
@@ -52,7 +54,7 @@ public class SelectAdapter extends RecyclerView.Adapter<SelectAdapter.InnerViewH
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mOnItemClickListener.onItemClick(position);
+                    mOnItemClickListener.onItemClick(position,mBeanList);
                 }
             });
         }
@@ -90,6 +92,7 @@ public class SelectAdapter extends RecyclerView.Adapter<SelectAdapter.InnerViewH
     }
 
     public interface onItemClickListener{
-        void onItemClick(int position);
+        //ACT点击item的时候 获取list和pos --> 才能获取让下一个页面获取到对应的URL
+        void onItemClick(int position,List<SelectBookBeans.CatesBean.BookListBean> mBeanList);
     }
 }

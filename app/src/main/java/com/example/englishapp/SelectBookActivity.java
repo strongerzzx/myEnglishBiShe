@@ -22,6 +22,7 @@ import java.util.List;
 import adapters.SelectAdapter;
 import beans.SelectBookBeans;
 import inerfaces.ISelectBookCallback;
+import presenters.HomePresent;
 import presenters.SelectBookPresent;
 import utils.LogUtil;
 import views.UILoader;
@@ -79,7 +80,11 @@ public class SelectBookActivity extends AppCompatActivity implements ISelectBook
 
         mAdapter.setOnItemClickListener(new SelectAdapter.onItemClickListener() {
             @Override
-            public void onItemClick(int position) {
+            public void onItemClick(int position, List<SelectBookBeans.CatesBean.BookListBean> mBeanList) {
+
+                HomePresent present = HomePresent.getPresent();
+                present.setSingleZip(mBeanList,position);
+
                 Intent intent=new Intent(SelectBookActivity.this,HomeActivity.class);
                 startActivity(intent);
             }

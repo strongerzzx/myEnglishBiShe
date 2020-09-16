@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Handler;
 
+import com.yatoooon.screenadaptation.ScreenAdapterTools;
+
 public class MyApplication  extends Application {
 
     private static Context sContext;
@@ -15,6 +17,7 @@ public class MyApplication  extends Application {
         sContext = getApplicationContext();
 
         sHandler=new Handler();
+
     }
 
     public static Context getContext() {
