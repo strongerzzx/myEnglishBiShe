@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CiKuActivity"
+    android:background="#fff">
+
+    <TextView
+        android:id="@+id/ci_ku_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="单词列表"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"/>
+
+    <com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout
+        android:id="@+id/ci_ku_tw_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/ci_ku_recyle_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/ci_ku_title"
+        android:overScrollMode="never"/>
+    </com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout>
+</RelativeLayout>

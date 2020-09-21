@@ -1,5 +1,8 @@
 package presenters;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -13,7 +16,8 @@ public class RetrofitMannager {
         if (sRetrofitMannager==null){
             synchronized (RetrofitMannager.class){
                 if (sRetrofitMannager==null){
-                    sRetrofitMannager=new Retrofit.Builder().baseUrl(url).addConverterFactory(GsonConverterFactory.create()).build();
+                    sRetrofitMannager=new Retrofit.Builder().baseUrl(url)
+                            .addConverterFactory(GsonConverterFactory.create()).build();
                 }
             }
         }

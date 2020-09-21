@@ -1,8 +1,7 @@
 package presenters;
 
-import android.util.Log;
+import com.example.englishapp.LoginActivity;
 
-import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +10,6 @@ import beans.SelectBookBeans;
 import inerfaces.Api;
 import inerfaces.ISelectBookCallback;
 import inerfaces.ISelectBookPresent;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -20,7 +18,7 @@ import utils.LogUtil;
 
 public class SelectBookPresent implements ISelectBookPresent {
 
-    public static final String BASE_URL="https://reciteword.youdao.com/";
+    private static final String BASE_SELECT_URL ="https://reciteword.youdao.com/";
     private static final String TAG = "SelectBookPresent";
     private List<ISelectBookCallback> mCallbackList =new ArrayList<>();
     private List<SelectBookBeans.CatesBean> mCurrentCatesBea=new ArrayList<>();
@@ -51,7 +49,7 @@ public class SelectBookPresent implements ISelectBookPresent {
     }
 
     private void getPartEnglish() {
-        Retrofit mannager = RetrofitMannager.getRetrofitMannager(BASE_URL);
+        Retrofit mannager = RetrofitMannager.getRetrofitMannager(BASE_SELECT_URL);
         Api api = mannager.create(Api.class);
         Call<SelectBookBeans> task = api.getSelectJson();
         task.enqueue(new Callback<SelectBookBeans>() {
@@ -59,7 +57,7 @@ public class SelectBookPresent implements ISelectBookPresent {
             public void onResponse(Call<SelectBookBeans> call, Response<SelectBookBeans> response) {
                 int code = response.code();
                 LogUtil.d(TAG,"code --> "+code);
-
+                LogUtil.d(TAG,"repons --> "+response);
                 if (code == HttpURLConnection.HTTP_OK){
                     try {
                         List<SelectBookBeans.CatesBean> cates = response.body().getCates();

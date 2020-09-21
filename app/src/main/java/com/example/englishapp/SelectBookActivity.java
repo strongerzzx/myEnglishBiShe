@@ -5,13 +5,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
@@ -21,6 +24,7 @@ import java.util.List;
 
 import adapters.SelectAdapter;
 import beans.SelectBookBeans;
+import inerfaces.IHomeCallback;
 import inerfaces.ISelectBookCallback;
 import presenters.HomePresent;
 import presenters.SelectBookPresent;
@@ -37,6 +41,8 @@ public class SelectBookActivity extends AppCompatActivity implements ISelectBook
     private View mSuccessView;
     private TwinklingRefreshLayout mRefreshLayout;
 
+    private Handler mHandler=new Handler();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +50,6 @@ public class SelectBookActivity extends AppCompatActivity implements ISelectBook
 
         mSelectBookPresent = SelectBookPresent.getInstance();
         mSelectBookPresent.regestierSelectBookCallback(this);
-
 
         initView();
 
@@ -78,15 +83,19 @@ public class SelectBookActivity extends AppCompatActivity implements ISelectBook
         //获取数据
         mSelectBookPresent.getBook();
 
+
         mAdapter.setOnItemClickListener(new SelectAdapter.onItemClickListener() {
             @Override
             public void onItemClick(int position, List<SelectBookBeans.CatesBean.BookListBean> mBeanList) {
 
+                //跳转的时候 把数据携带给下一个界面的P层
                 HomePresent present = HomePresent.getPresent();
                 present.setSingleZip(mBeanList,position);
 
+
                 Intent intent=new Intent(SelectBookActivity.this,HomeActivity.class);
                 startActivity(intent);
+
             }
         });
     }

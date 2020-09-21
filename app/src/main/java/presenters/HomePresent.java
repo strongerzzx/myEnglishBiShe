@@ -4,15 +4,21 @@ import android.os.Environment;
 
 import com.google.gson.Gson;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import bases.MyApplication;
 import beans.SelectBookBeans;
@@ -20,7 +26,6 @@ import beans.ZipBeans;
 import inerfaces.Api;
 import inerfaces.IHomeCallback;
 import inerfaces.IHomePresent;
-import okhttp3.Headers;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -34,10 +39,12 @@ public class HomePresent implements IHomePresent {
     private List<IHomeCallback> mList=new ArrayList<>();
     private int mCurrentPosition=0;
     private String mCurrentUrl;
+    private boolean isRandom=true;
 
     public static final String BASE_URL="http://ydschool-online.nos.netease.com/";
     private String mQueryParms;
     private String mDownName;
+    private List<ZipBeans> mCurrentZipList=new ArrayList<ZipBeans>();
 
 
     private HomePresent() {
@@ -60,12 +67,14 @@ public class HomePresent implements IHomePresent {
     public void regesiterHomeCallback(IHomeCallback callback) {
         if (!mList.contains(callback) && mList != null) {
             mList.add(callback);
+            isRandom=true;
         }
     }
 
     @Override
     public void unRegesiterHomeCallback(IHomeCallback callback) {
         if (mList != null) {
+            isRandom=false;
             mList.remove(callback);
         }
     }
@@ -76,7 +85,6 @@ public class HomePresent implements IHomePresent {
         if (mSelectBean != null) {
             String offlinedata = mSelectBean.get(position).getOfflinedata();
             this.mCurrentUrl=offlinedata;
-            LogUtil.d(TAG,"mCurr --> "+mCurrentUrl);
 
             //查询参数
             mQueryParms = mCurrentUrl.replace(BASE_URL, "");
@@ -95,7 +103,9 @@ public class HomePresent implements IHomePresent {
     @Override
     public void getSingleWords() {
 
+        requestZipLoading();
         //下载服务器上的zip包
+        isRandom=true;
         Retrofit mannager = RetrofitMannager.getRetrofitMannager("");
         Api api = mannager.create(Api.class);
         Call<ResponseBody> task = api.getSingleJson(mQueryParms);
@@ -104,13 +114,17 @@ public class HomePresent implements IHomePresent {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 int code = response.code();
                 LogUtil.d(TAG,"code --> "+ code);
-
                 if (code==HttpURLConnection.HTTP_OK){
-                    writeZip2SDCard(response.body());
-
-                    readDataInZip(new File(mDownName));
+                    File zipFile = writeZip2SDCard(response.body());
+                    //读取zip包内容
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                          //  jieyaZipLoading();
+                            readDataInZip(zipFile);
+                        }
+                    }).start();
                 }
-
             }
 
             @Override
@@ -122,29 +136,95 @@ public class HomePresent implements IHomePresent {
 
     }
 
-    private void readDataInZip(File downName) {
-        FileInputStream fis=null;
-        int len=0;
-        byte[] bytes=new byte[1024];
-        try {
-            fis=new FileInputStream(MyApplication.getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)+"/"+downName);
-            while ((len=fis.read(bytes))!=-1){
-                //TODO:读取本地的zip内容
-                String json=new String(bytes,0,bytes.length,"UTF-8");
-                Gson gson=new Gson();
-                ZipBeans zipBeans = gson.fromJson(json, ZipBeans.class);
-                LogUtil.d(TAG,"zipb --> "+zipBeans.getHeadWord());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    private void requestZipLoading(){
+        for (IHomeCallback iHomeCallback : mList) {
+            iHomeCallback.onRequestLoading();
         }
     }
 
-    private void writeZip2SDCard(ResponseBody body) {
+
+    private void readDataInZip(File file) {
+
+
+        BufferedReader br = null;
+        ZipInputStream zis = null;
+        try {
+            ZipFile zipFile = new ZipFile(file);
+            InputStream is = new BufferedInputStream(new FileInputStream(file));
+            zis = new ZipInputStream(is);
+            ZipEntry entry;
+            StringBuffer sb = new StringBuffer();
+            //存储bean里的单词  因为给的json是错的 必须要重新组装 里面没有List
+            List<ZipBeans> beansList = new ArrayList<>();
+            while ((entry = zis.getNextEntry()) != null) {
+                if (entry.isDirectory()) {
+                    LogUtil.d(TAG, "是dir");
+                } else {
+                    br = new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry)));
+                    String line = "";
+                    sb.append("[");
+                    while ((line = br.readLine()) != null) {
+                        Gson gson = new Gson();
+                        ZipBeans beans = gson.fromJson(line, ZipBeans.class);
+                        beansList.add(beans);
+                    }
+                    sb.append("]");
+
+                    mCurrentZipList.addAll(beansList);
+                    LogUtil.d(TAG,"currentList --> "+mCurrentZipList.size());
+                }
+            }
+            CikuPresent.getPresent().setWordkList(beansList);
+            //结束加载
+            finshLoading();
+
+            while (isRandom){
+                Random random=new Random();
+                int randomIndex = random.nextInt(mCurrentZipList.size());
+                String tranCn = mCurrentZipList.get(randomIndex).getContent().getWord().getContent().getTrans().get(0).getTranCn();
+                String wordHead = mCurrentZipList.get(randomIndex).getContent().getWord().getWordHead();
+                for (IHomeCallback iHomeCallback : mList) {
+                    iHomeCallback.showSingleWords(wordHead,tranCn);
+                    isRandom=true;
+                }
+                if (!isRandom){
+                    break;
+                }
+            }
+            LogUtil.d(TAG,"list size --> "+mCurrentZipList.size());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (zis != null) {
+                try {
+                    zis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
+
+    private void finshLoading() {
+        for (IHomeCallback iHomeCallback : mList) {
+            iHomeCallback.onFinishLoading();
+        }
+    }
+
+    private File writeZip2SDCard(ResponseBody body) {
 
         File exterDir = MyApplication.getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
         LogUtil.d(TAG,"down --> "+mDownName);
         File totalFile=new File(exterDir,mDownName);
+        LogUtil.d(TAG,"totalfile ---> "+totalFile.getPath());
         byte[] bytes=new byte[1024];
         int len=0;
         FileOutputStream fos=null;
@@ -176,6 +256,7 @@ public class HomePresent implements IHomePresent {
                 }
             }
         }
+        return totalFile;
     }
 
 

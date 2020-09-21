@@ -1,5 +1,7 @@
 package adapters;
 
+import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -30,5 +32,11 @@ public class HomePagerAdapter extends FragmentPagerAdapter {
         if (fragmentList != null) {
             mList.addAll(fragmentList);
         }
+    }
+
+    @Override
+    public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+        //一定要注释掉这个 不然每次都会重新刷新Fragment
+        //super.destroyItem(container, position, object);
     }
 }

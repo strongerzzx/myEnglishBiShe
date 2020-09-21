@@ -42,4 +42,5 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.3.0'
 
     implementation 'me.yatoooon:screenadaptation:1.1.1'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
 }
