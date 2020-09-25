@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
 import android.os.Message;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,12 +26,14 @@ import android.widget.Toast;
 
 import com.example.englishapp.CiKuActivity;
 import com.example.englishapp.R;
+import com.example.englishapp.SearchActivity;
 import com.yatoooon.screenadaptation.ScreenAdapterTools;
 
 import inerfaces.IHomeCallback;
 import presenters.HomePresent;
 import utils.LogUtil;
 import views.LoadingDialog;
+import views.SuggestPopWindow;
 import views.UILoader;
 
 /**
@@ -46,6 +49,7 @@ public class HomeFragment extends Fragment implements IHomeCallback {
     private UILoader mUiLoader;
     private View mSuccessView;
     private Button mBtnCiku;
+    private Button mSearch;
 
 
     public HomeFragment() {
@@ -55,7 +59,6 @@ public class HomeFragment extends Fragment implements IHomeCallback {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         if (mUiLoader == null) {
             mUiLoader = new UILoader(container.getContext()) {
                 @Override
@@ -78,6 +81,8 @@ public class HomeFragment extends Fragment implements IHomeCallback {
         mSuccessView = LayoutInflater.from(container.getContext()).inflate(R.layout.home_success_view, container, false);
         mBtnCiku = mSuccessView.findViewById(R.id.home_btn_ciku);
         mRefresh = mSuccessView.findViewById(R.id.home_refresh_iv);
+        mSearch = mSuccessView.findViewById(R.id.home_btn_search);
+
 
         mShowSingleEnglish = mSuccessView.findViewById(R.id.home_tv_english);
         mShowSingleChines = mSuccessView.findViewById(R.id.home_tv_chinese);
@@ -94,10 +99,20 @@ public class HomeFragment extends Fragment implements IHomeCallback {
         mPresent.getSingleWords();
 
 
+        //词库界面
         mBtnCiku.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), CiKuActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        //搜索界面
+        mSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(getActivity(), SearchActivity.class);
                 startActivity(intent);
             }
         });
@@ -112,6 +127,7 @@ public class HomeFragment extends Fragment implements IHomeCallback {
             mRefresh.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     mShowSingleEnglish.setText(singleEnglish);
                     mShowSingleChines.setText(singleChinese);
                 }

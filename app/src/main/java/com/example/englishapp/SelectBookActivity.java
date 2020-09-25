@@ -126,7 +126,6 @@ public class SelectBookActivity extends AppCompatActivity implements ISelectBook
             //TODO:根据P层的Cats里来随机获取 --> 刷新
             List<SelectBookBeans.CatesBean.BookListBean> bookList = catesBean.getBookList();
 
-            LogUtil.d(TAG,bookList.get(0).getSize()+"");
                 //空数据的情况
                 if (bookList!=null && bookList.size()==0){
                     mUiLoader.updateStatus(UILoader.UIStatus.EMPETY_DATA);

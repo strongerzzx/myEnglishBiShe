@@ -2,13 +2,16 @@ package com.example.englishapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.hardware.input.InputManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -17,6 +20,8 @@ import android.widget.Toast;
 
 import inerfaces.ILoginCallback;
 import presenters.LoginPresent;
+import utils.LogUtil;
+import views.LoadingDialog;
 
 
 public class LoginActivity extends AppCompatActivity implements ILoginCallback {
@@ -30,6 +35,10 @@ public class LoginActivity extends AppCompatActivity implements ILoginCallback {
     private LoginPresent mPresent;
     private SharedPreferences mSp;
     private SharedPreferences.Editor mEdit;
+    private InputMethodManager mIm;
+    private LoadingDialog mDialog;
+    private long mCurrentProgress;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +48,10 @@ public class LoginActivity extends AppCompatActivity implements ILoginCallback {
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(getResources().getColor(R.color.loginWindow));
+
+        //小键盘管理
+        mIm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+
 
         mSp = getSharedPreferences("Login",MODE_PRIVATE);
         mPresent = LoginPresent.getPresent();
@@ -59,6 +72,17 @@ public class LoginActivity extends AppCompatActivity implements ILoginCallback {
     }
 
     private void initEvent() {
+
+        //进入后延迟直接弹出小键盘
+        mEtAccount.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mEtAccount.requestFocus();
+                mIm.showSoftInput(mEtAccount,InputMethodManager.SHOW_IMPLICIT);
+            }
+        },50);
+
+
         //注册
         mBtnReg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,16 +112,17 @@ public class LoginActivity extends AppCompatActivity implements ILoginCallback {
                     }else{
                         mEdit.clear();
                     }
+
+
                     mPresent.setUser(user);
                     mPresent.setPswd(pswd);
                     mPresent.doLogin();
                     mEdit.commit();
-                    Intent intent=new Intent(LoginActivity.this,SelectBookActivity.class);
-                    startActivity(intent);
-                    finish();
+
                 }
             }
         });
+
     }
 
     private void initView() {
@@ -106,11 +131,33 @@ public class LoginActivity extends AppCompatActivity implements ILoginCallback {
         mEtAccount = findViewById(R.id.et_account);
         mEtPswd = findViewById(R.id.et_pswd);
         mRememberPswd = findViewById(R.id.ckb_remeber_pswd);
+
+        mDialog = new LoadingDialog(LoginActivity.this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         mPresent.unReLoginCallback(this);
+    }
+
+
+    //TODO:登陆加载Dialog
+    @Override
+    public void getLoadingLength(long progress) {
+        while (true){
+            if (mCurrentProgress>progress){
+                mDialog.dismiss();
+                Intent intent=new Intent(LoginActivity.this,SelectBookActivity.class);
+                startActivity(intent);
+                finish();
+                break;
+            }else {
+                mCurrentProgress++;
+                mDialog.show();
+            }
+            LogUtil.d(TAG,"current Progress --> "+mCurrentProgress);
+        }
+        LogUtil.d(TAG,"PROGRESS --> "+progress);
     }
 }

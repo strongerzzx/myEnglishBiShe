@@ -5,20 +5,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.englishapp.R;
 
+import org.xml.sax.helpers.LocatorImpl;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import beans.ZipBeans;
+import presenters.CollectionPresent;
+import utils.LogUtil;
 
-public class CiKuAdapter extends RecyclerView.Adapter<CiKuAdapter.InnerViewHolder> {
+public class CiKuAdapter extends RecyclerView.Adapter<CiKuAdapter.InnerViewHolder>  {
+    private static final String TAG = "CiKuAdapter";
     private List<ZipBeans> mList =new ArrayList<>();
     private onCiKuItemClickListener mOnCiKuItemClickListener;
+    private CollectionPresent mCollPresent;
 
 
     @NonNull
@@ -31,6 +38,7 @@ public class CiKuAdapter extends RecyclerView.Adapter<CiKuAdapter.InnerViewHolde
     @Override
     public void onBindViewHolder(@NonNull InnerViewHolder holder, int position) {
         ZipBeans beans = mList.get(position);
+        String ukphone = beans.getContent().getWord().getContent().getUkphone();//音标
         String headWord = mList.get(position).getHeadWord();
         String tranCn = beans.getContent().getWord().getContent().getTrans().get(0).getTranCn();
         String tranCn1 = beans.getContent().getWord().getContent().getTrans().get(0).getDescCn();
@@ -41,10 +49,19 @@ public class CiKuAdapter extends RecyclerView.Adapter<CiKuAdapter.InnerViewHolde
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mOnCiKuItemClickListener.onCiKuClickListener();
+                    mOnCiKuItemClickListener.onCiKuClickListener(headWord,tranCn,tranCn1,ukphone);
                 }
             });
         }
+
+        holder.ivCollection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCollPresent = CollectionPresent.getPresent();
+                mCollPresent.setData(position,tranCn,tranCn1,headWord);
+                mCollPresent.doCollection();
+            }
+        });
     }
 
     @Override
@@ -77,6 +94,8 @@ public class CiKuAdapter extends RecyclerView.Adapter<CiKuAdapter.InnerViewHolde
     }
 
     public interface onCiKuItemClickListener{
-        void onCiKuClickListener();
+        //item点击 --> 详情页
+        void onCiKuClickListener(String headWord, String tranCn, String tranCn1, String ukphone);
+
     }
 }

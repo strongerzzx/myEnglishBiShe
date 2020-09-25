@@ -11,9 +11,18 @@ import com.example.englishapp.R;
 public class LoadingDialog  extends Dialog {
 
     public LoadingDialog(@NonNull Context context) {
-        super(context);
+        this(context,0);
+    }
+
+    public LoadingDialog(@NonNull Context context, int themeResId) {
+        this(context, true,null);
+    }
+
+    protected LoadingDialog(@NonNull Context context, boolean cancelable, @Nullable OnCancelListener cancelListener) {
+        super(context, cancelable, cancelListener);
 
         setContentView(R.layout.dialog_loading_view);
         setCancelable(false);
+
     }
 }

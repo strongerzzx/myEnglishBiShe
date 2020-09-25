@@ -5,12 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,8 +38,6 @@ public class CiKuActivity extends AppCompatActivity implements ICikuCallback {
     private TextView mCikuTitle;
     private int mScrollY;//滑动的距离
     private int mTitleHeight;//标题控件的高度
-    private boolean isShow=true;//标题是否显示
-    private boolean isAnimationg;//是否在播放动画
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,10 +105,19 @@ public class CiKuActivity extends AppCompatActivity implements ICikuCallback {
 
         mAdapter.setOnCiKuItemClickListener(new CiKuAdapter.onCiKuItemClickListener() {
             @Override
-            public void onCiKuClickListener() {
-                Toast.makeText(CiKuActivity.this, "123", Toast.LENGTH_SHORT).show();
+            public void onCiKuClickListener(String headWord, String tranCn, String tranCn1, String ukphone) {
+                Intent intent=new Intent(CiKuActivity.this,CiKuDetailActivity.class);
+                Bundle bundle=new Bundle();
+                bundle.putString("headWord",headWord);
+                bundle.putString("tranCn",tranCn);
+                bundle.putString("tranCn1",tranCn1);
+                bundle.putString("ukphone",ukphone);
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
         });
+
+
     }
 
     @Override

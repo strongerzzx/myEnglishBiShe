@@ -79,6 +79,7 @@ public class CikuPresent implements ICiKuPresent {
     public void setWordkList(List<ZipBeans> beansList) {
         if (beansList != null) {
             //分页20条数据
+
             mPageUtils = new ListPageUtils<>(beansList,20);
         }
     }

@@ -171,10 +171,13 @@ public class HomePresent implements IHomePresent {
                     sb.append("]");
 
                     mCurrentZipList.addAll(beansList);
+                    //数据传给Seacrch的Present
+                    SearchPresent.getPresent().getZipList(mCurrentZipList);
                     LogUtil.d(TAG,"currentList --> "+mCurrentZipList.size());
                 }
             }
             CikuPresent.getPresent().setWordkList(beansList);
+
             //结束加载
             finshLoading();
 

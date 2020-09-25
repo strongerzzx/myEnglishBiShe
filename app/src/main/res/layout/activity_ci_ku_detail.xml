@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CiKuDetailActivity"
+    android:background="#FAFCF9">
+
+    <TextView
+        android:id="@+id/ci_ku_detail_english"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="accidental"
+        android:layout_centerInParent="true"
+        android:textColor="#2D76F7"
+        android:textSize="26sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/ci_ku_detail_fayin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="[asadfsfsfsfs]"
+        android:layout_below="@id/ci_ku_detail_english"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="10dp" />
+
+    <ImageView
+        android:id="@+id/ci_ku_detail_sound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/ic_ciku_detail_sounds"
+        android:layout_centerInParent="true"
+        android:layout_below="@id/ci_ku_detail_english"
+        android:layout_marginTop="10dp"
+        android:layout_toLeftOf="@id/ci_ku_detail_fayin"/>
+</RelativeLayout>
